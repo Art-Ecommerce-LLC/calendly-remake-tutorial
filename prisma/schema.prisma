@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+ 
+model User {
+  id              String   @id @default(cuid()) @unique
+  email           String   @unique
+  googleToken     String  @map("google_token") @unique
+
+  Event Event[]
+  @@map("users")
+
+}
+
+model Event {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String
+  date          DateTime @unique
+  isBooked      Boolean  @default(false) @map("is_booked")
+  guestEmail    String?  @map("guest_email")
+  googleEventId String?  @map("google_event_id") @unique
+  googleToken   String  @map("google_token")
+
+  user        User     @relation(fields: [googleToken], references: [googleToken])
+  @@map("events")
+  
+}
+
