@@ -31,6 +31,7 @@ import { DatePickerWithRange } from "../ui/DatePickerWithRange"
 import { createDateTime } from "@/lib/dates"
 import { useToast } from "@/hooks/use-toast"
 import {Spinner} from "@nextui-org/spinner";
+import GenerateKey from "../ui/GenerateKey"
 
 type FormValues = z.infer<typeof formSchema>;
 type TimeKeys = keyof FormValues['startTime']; // The keys of startTime and endTime ("hours", "minutes", "meridiem")
@@ -462,8 +463,9 @@ export function AppointmentsComponent() {
       </form>
     </Form>
     ) : (
-      <div>
+      <div className="space-y-2">
         <GoogleConnectButton />
+        <GenerateKey />
       </div>
     )}
     </>

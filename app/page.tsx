@@ -11,7 +11,6 @@ export default function App() {
         <h1 className="text-4xl p-6">Create Appointment Schedule</h1>
         <NextUIProvider>
           <AppointmentsComponent />
-          <GenerateKey />
         </NextUIProvider>
       </div>
     </div>

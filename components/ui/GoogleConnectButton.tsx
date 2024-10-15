@@ -3,18 +3,19 @@
 import {useState } from 'react';
 import { Button } from '@nextui-org/button';
 import {Spinner} from "@nextui-org/spinner";
+import { useRouter } from 'next/navigation';
 
 export default function GoogleConnectButton() {
 
     const [isLoading, setLoading] = useState(false);
+    const router = useRouter();
 
     async function handleGoogleSignIn() {
         setLoading(true);
-        window.open('/api/auth/google', '_blank');
+        router.push('/api/auth/google');
     }
 
     return (
-        <div>
             <Button
                 onClick={handleGoogleSignIn}
                 isDisabled={isLoading}
@@ -22,14 +23,12 @@ export default function GoogleConnectButton() {
                     {isLoading ? (
                         <>
                             <Spinner size="sm" />
-                            <span>Signing in on new page...</span>
+                            <span>Redirecting..</span>
                         </>
                     ) : (
                         "Sign in with Google"
                     )}
             </Button>
-
-        </div>
     )
 
 }

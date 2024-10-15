@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     // Create the event in Google Calendar
 
     const eventRequest = {
-        calendarId: 'b5e5d17ac128bb7a0eacd7c25a5d342d581c0feeeab4d2725ea6bfe9a30a38b8@group.calendar.google.com',
+        calendarId: process.env.GOOGLE_CALENDAR_ID,
         resource: {
           summary: title,
           description,
@@ -131,7 +131,6 @@ export async function POST(request: NextRequest) {
  
   return NextResponse.json({ message: 'Event created' }, { status: 201 });
 } catch (error) {
-  console.error('Error creating event:', error);
   return NextResponse.json({ error: 'Error creating event' }, { status: 500 });
 }
 }

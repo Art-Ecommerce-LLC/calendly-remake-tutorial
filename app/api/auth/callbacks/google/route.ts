@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server';
 import db from '@/lib/db'
 import{ encrypt } from '@/lib/encrypt' 
 import { cookies } from 'next/headers'
+import {  Prisma } from '@prisma/client'
 
 // Load environment variables
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
@@ -45,12 +46,34 @@ export async function GET(request: NextRequest) {
     const encryptedGoogleTokens = await encrypt({accessToken, refreshToken});
 
     // Create a new service token to store in the cookies
-    const newUser = await db.user.create({
-      data: {
-        email: userInfo.email,
-        googleToken: encryptedGoogleTokens,
-      },
-    });
+    let newUser;
+    try {
+      newUser = await db.user.create({
+        data: {
+          email: userInfo.email,
+          googleToken: encryptedGoogleTokens,
+        },
+      });
+    } catch (error ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          // Unique constraint failed
+          // Update the user's google token
+          newUser = await db.user.update({
+            where: {
+              email: userInfo.email,
+            },
+            data: {
+              googleToken: encryptedGoogleTokens,
+            },
+          });
+      }
+    }
+  }
+
+    if (!newUser) {
+      return NextResponse.json({ error: 'Failed to create or update user' }, { status: 500 });
+    }
 
     const encryptedSession = await encrypt({ userId : newUser.id });
 
@@ -62,7 +85,7 @@ export async function GET(request: NextRequest) {
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
       maxAge: 1000 * 60 * 60 * 24 * 7,
       path : '/'
-  });
+    });
     return NextResponse.redirect(`${NODE_URL}/`);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to authenticate' }, { status: 500 });
