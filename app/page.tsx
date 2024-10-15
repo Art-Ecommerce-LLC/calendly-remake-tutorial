@@ -1,7 +1,6 @@
 
 import { AppointmentsComponent } from "@/components/forms/AppointmentsComponent";
 import {NextUIProvider} from "@nextui-org/react";
-import GenerateKey from "@/components/ui/GenerateKey";
 
 export default function App() {
   return (
